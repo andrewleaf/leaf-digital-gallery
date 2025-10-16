@@ -1,5 +1,5 @@
 @echo off
-echo 🌱 Setting up Leaf Digital Gallery...
+echo 🌱 Setting up Leaf Digital Gallery with Latest Packages...
 echo.
 
 REM Check if Node.js is installed

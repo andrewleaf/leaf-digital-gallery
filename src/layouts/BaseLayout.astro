@@ -63,6 +63,9 @@ const { title, description = "A beautiful photography and art gallery showcasing
     <script>
       // Lightbox functionality
       class Lightbox {
+        currentIndex: number;
+        images: Array<{src: string, caption: string}>;
+
         constructor() {
           this.currentIndex = 0;
           this.images = [];
@@ -74,17 +77,18 @@ const { title, description = "A beautiful photography and art gallery showcasing
           const closeBtn = document.getElementById('lightbox-close');
           const prevBtn = document.getElementById('lightbox-prev');
           const nextBtn = document.getElementById('lightbox-next');
-          const lightboxImage = document.getElementById('lightbox-image');
-          const lightboxCaption = document.getElementById('lightbox-caption');
 
           // Add click listeners to gallery images
           document.addEventListener('click', (e) => {
-            if (e.target.closest('[data-lightbox]')) {
-              e.preventDefault();
-              const img = e.target.closest('[data-lightbox]');
-              const src = img.dataset.lightbox;
-              const caption = img.dataset.caption || '';
-              this.openLightbox(src, caption);
+            if (e.target && 'closest' in e.target) {
+              const target = e.target as Element;
+              if (target.closest('[data-lightbox]')) {
+                e.preventDefault();
+                const img = target.closest('[data-lightbox]') as HTMLElement;
+                const src = img.dataset.lightbox;
+                const caption = img.dataset.caption || '';
+                if (src) this.openLightbox(src, caption);
+              }
             }
           });
 
@@ -115,19 +119,22 @@ const { title, description = "A beautiful photography and art gallery showcasing
           });
         }
 
-        openLightbox(src, caption) {
+        openLightbox(src: string, caption: string) {
           const lightbox = document.getElementById('lightbox');
-          const lightboxImage = document.getElementById('lightbox-image');
+          const lightboxImage = document.getElementById('lightbox-image') as HTMLImageElement;
           const lightboxCaption = document.getElementById('lightbox-caption');
 
           // Collect all gallery images for navigation
           this.images = Array.from(document.querySelectorAll('[data-lightbox]'))
-            .map(img => ({
-              src: img.dataset.lightbox,
-              caption: img.dataset.caption || ''
-            }));
+            .map((img: Element) => {
+              const htmlImg = img as HTMLElement;
+              return {
+                src: htmlImg.dataset.lightbox || '',
+                caption: htmlImg.dataset.caption || ''
+              };
+            });
 
-          this.currentIndex = this.images.findIndex(img => img.src === src);
+          this.currentIndex = this.images.findIndex((img: {src: string, caption: string}) => img.src === src);
 
           if (lightboxImage) lightboxImage.src = src;
           if (lightboxCaption) lightboxCaption.textContent = caption;
@@ -158,7 +165,7 @@ const { title, description = "A beautiful photography and art gallery showcasing
         }
 
         updateLightboxImage() {
-          const lightboxImage = document.getElementById('lightbox-image');
+          const lightboxImage = document.getElementById('lightbox-image') as HTMLImageElement;
           const lightboxCaption = document.getElementById('lightbox-caption');
           const currentImage = this.images[this.currentIndex];
 

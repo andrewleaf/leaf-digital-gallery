@@ -25,7 +25,7 @@ export class CMSService {
     };
 
     if (this.config.apiKey) {
-      headers['Authorization'] = `Bearer ${this.config.apiKey}`;
+      (headers as Record<string, string>)['Authorization'] = `Bearer ${this.config.apiKey}`;
     }
 
     try {

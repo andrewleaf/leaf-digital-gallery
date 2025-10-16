@@ -16,7 +16,7 @@ const { images } = Astro.props;
 ---
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-  {images.map((image, index) => (
+  {images.map((image) => (
     <div class="group relative overflow-hidden rounded-lg bg-gray-200 aspect-square cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
       <img 
         src={image.url} 

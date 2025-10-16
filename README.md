@@ -16,7 +16,7 @@ A modern photography and art gallery application built with Astro and GraphQL. P
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+ (recommended: Node.js 20+)
 - npm or yarn
 
 ### Installation
@@ -221,6 +221,8 @@ export default defineConfig({
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
+- `npm run check` - Run TypeScript and Astro checks
+- `npm run check:watch` - Run checks in watch mode
 - `npm run astro` - Run Astro CLI commands
 
 ### Code Style
