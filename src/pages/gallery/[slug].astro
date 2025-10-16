@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ImageGrid from '../../components/ImageGrid.astro';
+import GalleryHeader from '../../components/GalleryHeader.astro';
+import { mockGalleries } from '../../lib/cms';
+
+export async function getStaticPaths() {
+  const galleries = mockGalleries;
+  
+  return galleries.map((gallery) => ({
+    params: { slug: gallery.slug },
+    props: { gallery },
+  }));
+}
+
+const { gallery } = Astro.props;
+---
+
+<BaseLayout 
+  title={`${gallery.title} - Leaf Digital Gallery`}
+  description={gallery.description}
+  image={gallery.coverImage.url}
+>
+  <GalleryHeader gallery={gallery} />
+  
+  <main class="container mx-auto px-4 py-8">
+    <ImageGrid images={gallery.images} />
+  </main>
+  
+  <!-- Back to galleries link -->
+  <div class="container mx-auto px-4 pb-16">
+    <a 
+      href="/" 
+      class="inline-flex items-center text-primary-600 hover:text-primary-700 font-medium transition-colors"
+    >
+      <svg class="mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+      </svg>
+      Back to All Galleries
+    </a>
+  </div>
+</BaseLayout>

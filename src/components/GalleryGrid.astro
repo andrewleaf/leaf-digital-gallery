@@ -1,0 +1,30 @@
+---
+import GalleryCard from './GalleryCard.astro';
+
+export interface Props {
+  galleries: Array<{
+    id: string;
+    title: string;
+    description?: string;
+    slug: string;
+    coverImage: {
+      id: string;
+      url: string;
+      alt: string;
+      width: number;
+      height: number;
+    };
+    images: Array<any>;
+    createdAt: string;
+    updatedAt: string;
+  }>;
+}
+
+const { galleries } = Astro.props;
+---
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  {galleries.map((gallery) => (
+    <GalleryCard gallery={gallery} />
+  ))}
+</div>

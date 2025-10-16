@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GalleryGrid from '../components/GalleryGrid.astro';
+import Hero from '../components/Hero.astro';
+import { mockGalleries } from '../lib/cms';
+
+// In a real app, this would come from your CMS or GraphQL API
+const galleries = mockGalleries;
+---
+
+<BaseLayout title="Leaf Digital Gallery - Photography & Art Portfolio">
+  <Hero />
+  
+  <main class="container mx-auto px-4 py-16">
+    <section class="mb-16">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold text-gray-900 mb-4">Featured Galleries</h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+          Explore our curated collection of photography and art galleries, each telling a unique visual story.
+        </p>
+      </div>
+      
+      <GalleryGrid galleries={galleries} />
+    </section>
+    
+    <section class="text-center">
+      <h3 class="text-2xl font-semibold text-gray-900 mb-4">Ready to Showcase Your Work?</h3>
+      <p class="text-gray-600 mb-8 max-w-xl mx-auto">
+        Create your own stunning gallery and share your artistic vision with the world.
+      </p>
+      <a 
+        href="/contact" 
+        class="inline-flex items-center px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+      >
+        Get Started
+        <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </section>
+  </main>
+</BaseLayout>

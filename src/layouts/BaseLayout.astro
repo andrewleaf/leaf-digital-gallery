@@ -1,0 +1,176 @@
+---
+import Navigation from '../components/Navigation.astro';
+
+export interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+}
+
+const { title, description = "A beautiful photography and art gallery showcasing stunning visuals and creative works.", image } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {image && <meta property="og:image" content={image} />}
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    {image && <meta property="twitter:image" content={image} />}
+    
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <title>{title}</title>
+  </head>
+  <body class="bg-white text-gray-900 font-sans antialiased">
+    <Navigation />
+    <slot />
+    
+    <!-- Lightbox Container -->
+    <div id="lightbox" class="fixed inset-0 bg-black bg-opacity-90 z-50 hidden items-center justify-center">
+      <button id="lightbox-close" class="absolute top-4 right-4 text-white text-2xl hover:text-gray-300 transition-colors">
+        ✕
+      </button>
+      <button id="lightbox-prev" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-2xl hover:text-gray-300 transition-colors">
+        ‹
+      </button>
+      <button id="lightbox-next" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-2xl hover:text-gray-300 transition-colors">
+        ›
+      </button>
+      <div class="max-w-4xl max-h-[90vh] p-8">
+        <img id="lightbox-image" class="max-w-full max-h-full object-contain" alt="" />
+        <div id="lightbox-caption" class="text-white text-center mt-4 text-lg"></div>
+      </div>
+    </div>
+
+    <script>
+      // Lightbox functionality
+      class Lightbox {
+        constructor() {
+          this.currentIndex = 0;
+          this.images = [];
+          this.init();
+        }
+
+        init() {
+          const lightbox = document.getElementById('lightbox');
+          const closeBtn = document.getElementById('lightbox-close');
+          const prevBtn = document.getElementById('lightbox-prev');
+          const nextBtn = document.getElementById('lightbox-next');
+          const lightboxImage = document.getElementById('lightbox-image');
+          const lightboxCaption = document.getElementById('lightbox-caption');
+
+          // Add click listeners to gallery images
+          document.addEventListener('click', (e) => {
+            if (e.target.closest('[data-lightbox]')) {
+              e.preventDefault();
+              const img = e.target.closest('[data-lightbox]');
+              const src = img.dataset.lightbox;
+              const caption = img.dataset.caption || '';
+              this.openLightbox(src, caption);
+            }
+          });
+
+          closeBtn?.addEventListener('click', () => this.closeLightbox());
+          prevBtn?.addEventListener('click', () => this.prevImage());
+          nextBtn?.addEventListener('click', () => this.nextImage());
+
+          lightbox?.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+              this.closeLightbox();
+            }
+          });
+
+          document.addEventListener('keydown', (e) => {
+            if (lightbox?.classList.contains('hidden')) return;
+            
+            switch(e.key) {
+              case 'Escape':
+                this.closeLightbox();
+                break;
+              case 'ArrowLeft':
+                this.prevImage();
+                break;
+              case 'ArrowRight':
+                this.nextImage();
+                break;
+            }
+          });
+        }
+
+        openLightbox(src, caption) {
+          const lightbox = document.getElementById('lightbox');
+          const lightboxImage = document.getElementById('lightbox-image');
+          const lightboxCaption = document.getElementById('lightbox-caption');
+
+          // Collect all gallery images for navigation
+          this.images = Array.from(document.querySelectorAll('[data-lightbox]'))
+            .map(img => ({
+              src: img.dataset.lightbox,
+              caption: img.dataset.caption || ''
+            }));
+
+          this.currentIndex = this.images.findIndex(img => img.src === src);
+
+          if (lightboxImage) lightboxImage.src = src;
+          if (lightboxCaption) lightboxCaption.textContent = caption;
+          if (lightbox) {
+            lightbox.classList.remove('hidden');
+            lightbox.classList.add('flex');
+          }
+        }
+
+        closeLightbox() {
+          const lightbox = document.getElementById('lightbox');
+          if (lightbox) {
+            lightbox.classList.add('hidden');
+            lightbox.classList.remove('flex');
+          }
+        }
+
+        prevImage() {
+          if (this.images.length === 0) return;
+          this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
+          this.updateLightboxImage();
+        }
+
+        nextImage() {
+          if (this.images.length === 0) return;
+          this.currentIndex = (this.currentIndex + 1) % this.images.length;
+          this.updateLightboxImage();
+        }
+
+        updateLightboxImage() {
+          const lightboxImage = document.getElementById('lightbox-image');
+          const lightboxCaption = document.getElementById('lightbox-caption');
+          const currentImage = this.images[this.currentIndex];
+
+          if (lightboxImage) lightboxImage.src = currentImage.src;
+          if (lightboxCaption) lightboxCaption.textContent = currentImage.caption;
+        }
+      }
+
+      // Initialize lightbox when DOM is loaded
+      document.addEventListener('DOMContentLoaded', () => {
+        new Lightbox();
+      });
+    </script>
+  </body>
+</html>

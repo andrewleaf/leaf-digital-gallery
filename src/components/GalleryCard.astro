@@ -1,0 +1,89 @@
+---
+import { Image } from 'astro:assets';
+
+export interface Props {
+  gallery: {
+    id: string;
+    title: string;
+    description?: string;
+    slug: string;
+    coverImage: {
+      id: string;
+      url: string;
+      alt: string;
+      width: number;
+      height: number;
+    };
+    images: Array<any>;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
+const { gallery } = Astro.props;
+
+// Format date for display
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+---
+
+<article class="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+  <div class="relative overflow-hidden">
+    <!-- Cover Image -->
+    <div class="aspect-[4/3] bg-gray-200">
+      <img 
+        src={gallery.coverImage.url} 
+        alt={gallery.coverImage.alt}
+        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        loading="lazy"
+      />
+    </div>
+    
+    <!-- Overlay with gallery info -->
+    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+      <div class="text-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div class="text-2xl font-bold mb-2">{gallery.images.length} Photos</div>
+        <div class="text-sm">Click to explore</div>
+      </div>
+    </div>
+    
+    <!-- Image count badge -->
+    <div class="absolute top-4 right-4 bg-white bg-opacity-90 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-medium text-gray-900">
+      {gallery.images.length} photos
+    </div>
+  </div>
+  
+  <div class="p-6">
+    <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
+      <a href={`/gallery/${gallery.slug}`} class="hover:underline">
+        {gallery.title}
+      </a>
+    </h3>
+    
+    {gallery.description && (
+      <p class="text-gray-600 mb-4 line-clamp-2">
+        {gallery.description}
+      </p>
+    )}
+    
+    <div class="flex items-center justify-between text-sm text-gray-500">
+      <time datetime={gallery.updatedAt}>
+        Updated {formatDate(gallery.updatedAt)}
+      </time>
+      <a 
+        href={`/gallery/${gallery.slug}`}
+        class="inline-flex items-center text-primary-600 hover:text-primary-700 font-medium transition-colors"
+      >
+        View Gallery
+        <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+  </div>
+</article>
